@@ -74,13 +74,13 @@ describe("Character Routes", () => {
         p2Character,
         p3Character,
       ]);
-      // await Promise.all([
-      //   p1.createRole({name: 'Tank'}),
-      //   p1.createRole({name: 'Top'}),
-      //   p2.createRole({name: 'Jungle'}),
-      //   p3.createRole({name: 'Mid'}),
-      //   p3.createRole({name: 'Support'})
-      // ]);
+      await Promise.all([
+        p1.createRole({ name: "Tank" }),
+        p1.createRole({ name: "Top" }),
+        p2.createRole({ name: "Jungle" }),
+        p3.createRole({ name: "Mid" }),
+        p3.createRole({ name: "Support" }),
+      ]);
     });
 
     describe("Parte UNO", () => {

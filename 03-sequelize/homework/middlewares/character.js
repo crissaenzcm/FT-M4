@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const { Op, Character, Role } = require("../db");
+const { Op, Character, Role, Ability } = require("../db");
 const router = Router();
 
 router.post("/", async (req, res) => {
@@ -43,6 +43,17 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/young", async (req, res) => {
+  try {
+    const youngChar = await Character.findAll({
+      where: { age: { [Op.lt]: 25 } },
+    });
+    res.status(200).json(youngChar);
+  } catch (error) {
+    res.status(404).send(error, message);
+  }
+});
+
 router.get("/:code", async (req, res) => {
   const { code } = req.params;
   try {
@@ -54,6 +65,38 @@ router.get("/:code", async (req, res) => {
       .status(404)
       .send(`El código ${code} no corresponde a un personaje existente`);
   }
+});
+
+router.put("/:attribute", async (req, res) => {
+  const { attribute } = req.params;
+  const { value } = req.query;
+  await Character.update(
+    { [attribute]: value },
+    {
+      where: {
+        [attribute]: null,
+      },
+    }
+  );
+  res.status(200).send("Personajes actualizados");
+});
+
+router.put("/addAbilities", async (req, res) => {
+  const { codeCharacter, abilities } = req.body;
+  const character = await Character.findByPk(codeCharacter);
+  const newAbilities = await Ability.bulkCreate(abilities);
+  await character.addAbilities(abilities);
+  res.send("Habilidades creadas y relacionadas");
+});
+
+router.get("roles/:code", async (req, res) => {
+  const { code } = req.params;
+  const character = await Character.findByPk(code, {
+    include: {
+      Model: Role,
+    },
+  });
+  res.status(200).json(character);
 });
 
 module.exports = router;

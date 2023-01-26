@@ -14,6 +14,19 @@ module.exports = (sequelize) => {
       type: DataTypes.FLOAT,
       allowNull: false,
       unique: "name_manacost",
+      validate: {
+        min: 10.0,
+        max: 250.0,
+      },
+    },
+    summary: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        const name = this.getDataValue("name");
+        const mana_cost = Math.floor(this.getDataValue("mana_cost"));
+        const description = this.getDataValue("description");
+        return `${name} (${mana_cost} points of mana) - Description: ${description}`;
+      },
     },
   });
 };
